@@ -1,71 +1,71 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { AppState, Product, Customer, Ticket, SiteConfig, CartItem, BlogPost, Order } from './types';
-import { INITIAL_PRODUCTS, INITIAL_CONFIG, INITIAL_CUSTOMERS, INITIAL_TICKETS, INITIAL_BLOGS, INITIAL_REVIEWS } from './constants';
-import { Chatbot } from './components/Chatbot';
-import { HomePage, ProductListPage, ProductDetailPage, ContactPage, CartPage, BlogPage, BlogDetailPage, AboutPage } from './pages/PublicPages';
-import { AdminDashboard, AdminCMS, AdminCRM } from './pages/AdminPages';
+import { AppState, Product, Customer, Ticket, SiteConfig, CartItem, BlogPost, Order } from '@/types';
+import { INITIAL_PRODUCTS, INITIAL_CONFIG, INITIAL_CUSTOMERS, INITIAL_TICKETS, INITIAL_BLOGS, INITIAL_REVIEWS } from '@/constants';
+import { Chatbot } from '@/components/Chatbot';
+import { HomePage, ProductListPage, ProductDetailPage, ContactPage, CartPage, BlogPage, BlogDetailPage, AboutPage } from '@/pages/PublicPages';
+import { AdminDashboard, AdminCMS, AdminCRM } from '@/pages/AdminPages';
 import { ShoppingCart, Menu, X, LayoutDashboard, Settings, Users, LogOut } from 'lucide-react';
 
 // --- Global State ---
 const StoreContext = createContext<AppState | null>(null);
 
 export const useStore = () => {
-  const context = useContext(StoreContext);
-  if (!context) throw new Error("useStore must be used within StoreProvider");
-  return context;
+    const context = useContext(StoreContext);
+    if (!context) throw new Error("useStore must be used within StoreProvider");
+    return context;
 };
 
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [siteConfig, setSiteConfig] = useState<SiteConfig>(INITIAL_CONFIG);
-  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
-  const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  
-  const addToCart = (product: Product) => {
-    setCart(prev => {
-        const exist = prev.find(i => i.id === product.id);
-        if (exist) return prev.map(i => i.id === product.id ? {...i, quantity: i.quantity + 1} : i);
-        return [...prev, { ...product, quantity: 1 }];
-    });
-  };
+    const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+    const [siteConfig, setSiteConfig] = useState<SiteConfig>(INITIAL_CONFIG);
+    const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
+    const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [cart, setCart] = useState<CartItem[]>([]);
 
-  const removeFromCart = (id: string) => {
-      setCart(prev => prev.filter(i => i.id !== id));
-  };
+    const addToCart = (product: Product) => {
+        setCart(prev => {
+            const exist = prev.find(i => i.id === product.id);
+            if (exist) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+            return [...prev, { ...product, quantity: 1 }];
+        });
+    };
 
-  const clearCart = () => setCart([]);
+    const removeFromCart = (id: string) => {
+        setCart(prev => prev.filter(i => i.id !== id));
+    };
 
-  const updateProduct = (p: Product) => {
-      setProducts(prev => prev.map(item => item.id === p.id ? p : item));
-  };
+    const clearCart = () => setCart([]);
 
-  const addProduct = (p: Product) => {
-      setProducts(prev => [p, ...prev]);
-  };
+    const updateProduct = (p: Product) => {
+        setProducts(prev => prev.map(item => item.id === p.id ? p : item));
+    };
 
-  const deleteProduct = (id: string) => {
-      setProducts(prev => prev.filter(p => p.id !== id));
-  };
+    const addProduct = (p: Product) => {
+        setProducts(prev => [p, ...prev]);
+    };
 
-  const addOrder = (order: Order) => {
-      setOrders(prev => [order, ...prev]);
-  };
+    const deleteProduct = (id: string) => {
+        setProducts(prev => prev.filter(p => p.id !== id));
+    };
 
-  return (
-    <StoreContext.Provider value={{
-      products, customers, tickets, reviews: INITIAL_REVIEWS, siteConfig, cart, blogPosts: INITIAL_BLOGS, orders,
-      addToCart, removeFromCart, clearCart, updateSiteConfig: setSiteConfig, 
-      addCustomer: (c) => setCustomers(prev => [...prev, c]),
-      addTicket: (t) => setTickets(prev => [...prev, t]),
-      addOrder,
-      updateProduct, addProduct, deleteProduct
-    }}>
-      {children}
-    </StoreContext.Provider>
-  );
+    const addOrder = (order: Order) => {
+        setOrders(prev => [order, ...prev]);
+    };
+
+    return (
+        <StoreContext.Provider value={{
+            products, customers, tickets, reviews: INITIAL_REVIEWS, siteConfig, cart, blogPosts: INITIAL_BLOGS, orders,
+            addToCart, removeFromCart, clearCart, updateSiteConfig: setSiteConfig,
+            addCustomer: (c) => setCustomers(prev => [...prev, c]),
+            addTicket: (t) => setTickets(prev => [...prev, t]),
+            addOrder,
+            updateProduct, addProduct, deleteProduct
+        }}>
+            {children}
+        </StoreContext.Provider>
+    );
 };
 
 // --- Layouts ---
@@ -105,15 +105,15 @@ const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                         </button>
                     </div>
                 </div>
-                
+
                 {/* Mobile Menu */}
                 {isMenuOpen && (
                     <div className="md:hidden bg-white dark:bg-gray-900 border-t p-4 space-y-4">
-                         <Link to="/" className="block py-2" onClick={() => setIsMenuOpen(false)}>Trang Chủ</Link>
-                         <Link to="/products" className="block py-2" onClick={() => setIsMenuOpen(false)}>Sản Phẩm</Link>
-                         <Link to="/blog" className="block py-2" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-                         <Link to="/contact" className="block py-2" onClick={() => setIsMenuOpen(false)}>Liên Hệ</Link>
-                         <Link to="/admin" className="block py-2 text-brand-600" onClick={() => setIsMenuOpen(false)}>Admin Portal</Link>
+                        <Link to="/" className="block py-2" onClick={() => setIsMenuOpen(false)}>Trang Chủ</Link>
+                        <Link to="/products" className="block py-2" onClick={() => setIsMenuOpen(false)}>Sản Phẩm</Link>
+                        <Link to="/blog" className="block py-2" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+                        <Link to="/contact" className="block py-2" onClick={() => setIsMenuOpen(false)}>Liên Hệ</Link>
+                        <Link to="/admin" className="block py-2 text-brand-600" onClick={() => setIsMenuOpen(false)}>Admin Portal</Link>
                     </div>
                 )}
             </header>
@@ -145,18 +145,18 @@ const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                         </ul>
                     </div>
                     <div>
-                         <h3 className="text-white text-lg font-bold mb-4">Kết Nối</h3>
-                         <div className="flex gap-4">
-                             {siteConfig.social.facebook && <a href={`https://${siteConfig.social.facebook}`} target="_blank" rel="noreferrer" className="hover:text-blue-500">Facebook</a>}
-                             {siteConfig.social.tiktok && <a href={`https://${siteConfig.social.tiktok}`} target="_blank" rel="noreferrer" className="hover:text-pink-500">TikTok</a>}
-                         </div>
+                        <h3 className="text-white text-lg font-bold mb-4">Kết Nối</h3>
+                        <div className="flex gap-4">
+                            {siteConfig.social.facebook && <a href={`https://${siteConfig.social.facebook}`} target="_blank" rel="noreferrer" className="hover:text-blue-500">Facebook</a>}
+                            {siteConfig.social.tiktok && <a href={`https://${siteConfig.social.tiktok}`} target="_blank" rel="noreferrer" className="hover:text-pink-500">TikTok</a>}
+                        </div>
                     </div>
                 </div>
                 <div className="text-center mt-12 pt-8 border-t border-gray-800 text-sm">
                     © 2023 Đặc Sản Tây Bắc. All rights reserved.
                 </div>
             </footer>
-            
+
             <Chatbot />
         </div>
     );
@@ -178,14 +178,13 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </div>
                 <nav className="flex-1 p-4 space-y-2">
                     {navItems.map(item => (
-                        <Link 
-                            key={item.path} 
+                        <Link
+                            key={item.path}
                             to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                                location.pathname === item.path 
-                                ? 'bg-brand-50 text-brand-700 dark:bg-gray-700 dark:text-white' 
-                                : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
-                            }`}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${location.pathname === item.path
+                                    ? 'bg-brand-50 text-brand-700 dark:bg-gray-700 dark:text-white'
+                                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
+                                }`}
                         >
                             <item.icon size={20} />
                             {item.label}
@@ -194,7 +193,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </nav>
                 <div className="p-4 border-t dark:border-gray-700">
                     <Link to="/" className="flex items-center gap-2 text-red-500 font-medium p-2 hover:bg-red-50 rounded">
-                        <LogOut size={20}/> Thoát về trang chủ
+                        <LogOut size={20} /> Thoát về trang chủ
                     </Link>
                 </div>
             </aside>
@@ -211,7 +210,7 @@ const AppRoutes = () => {
             <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             <Route path="/admin/cms" element={<AdminLayout><AdminCMS /></AdminLayout>} />
             <Route path="/admin/crm" element={<AdminLayout><AdminCRM /></AdminLayout>} />
-            
+
             <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
             <Route path="/products" element={<PublicLayout><ProductListPage /></PublicLayout>} />
             <Route path="/products/:id" element={<PublicLayout><ProductDetailPage /></PublicLayout>} />
@@ -225,13 +224,13 @@ const AppRoutes = () => {
 }
 
 function App() {
-  return (
-    <StoreProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </StoreProvider>
-  );
+    return (
+        <StoreProvider>
+            <Router>
+                <AppRoutes />
+            </Router>
+        </StoreProvider>
+    );
 }
 
 export default App;

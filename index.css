@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-50: #f0fdf4;
+  --brand-500: #22c55e;
+  --brand-600: #16a34a;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom styles for the mountain theme */
+.mountain-bg {
+  background: linear-gradient(to bottom, var(--brand-50), #ffffff);
+}
